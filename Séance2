@@ -1,8 +1,7 @@
-
 import arcade
 
-SCREEN_WIDTH = 1300
-SCREEN_HEIGHT = 700
+SCREEN_WIDTH = 1000
+SCREEN_HEIGHT = 600
 
 RECT_WIDTH = 70
 RECT_HEIGHT = 70
@@ -87,7 +86,7 @@ class MyGame(arcade.Window):
 
 
 def main():
-    MyGame(1300, 700, "Test")
+    MyGame(1000, 600, "Test")
     arcade.run()
 
 
