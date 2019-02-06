@@ -1,7 +1,5 @@
 import arcade
-import random
-import os
-import math
+
 
 SCREEN_TITLE = "Test"
 SCREEN_WIDTH = 1000
@@ -9,7 +7,7 @@ SCREEN_HEIGHT = 700
 
 SPRITE_SCALING = 1
 
-MOVEMENT_SPEED = 7
+MOVEMENT_SPEED = 8
 
 
 class MyGame(arcade.Window):
@@ -72,7 +70,7 @@ class MyGame(arcade.Window):
 
         self.player.center_x = SCREEN_WIDTH // 2
         self.player.center_y = SCREEN_HEIGHT // 2
-        self.player.scale = 0.8
+        self.player.scale = SPRITE_SCALING
 
         self.all_sprites_list.append(self.player)
 
