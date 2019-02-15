@@ -3,16 +3,16 @@ import arcade
 import math
 import os
 
-SCREEN_WIDTH = 1000
-SCREEN_HEIGHT = 700
+SCREEN_WIDTH = 1200
+SCREEN_HEIGHT = 900
 SCREEN_TITLE = "Test"
 
 SPRITE_SCALING_PLAYER = 0.9
-SPRITE_SCALING_GOBLIN = 1.5
-SPRITE_SCALING_LASER = 0.5
-SPRITE_SCALING_LASERRED = 0.1
+SPRITE_SCALING_GOBLIN = 1.4
+SPRITE_SCALING_LASER = 0.2
+SPRITE_SCALING_LASERRED = 0.08
 
-GOBLIN_COUNT = 10
+GOBLIN_COUNT = 5
 MOVEMENT_SPEED = 7
 BULLET_SPEED = 6
 BULLET1_SPEED = 6
@@ -54,8 +54,8 @@ class MyGame(arcade.Window):
         self.score = 0
         self.score_text = None
 
-
-        arcade.set_background_color(arcade.color.GRAY)
+        self.background = None
+        # arcade.set_background_color(arcade.color.GRAY)
         
     def setup(self):
 
@@ -67,9 +67,9 @@ class MyGame(arcade.Window):
         self.bullet_list = arcade.SpriteList()
         self.bullet1_list = arcade.SpriteList()
         
-        # Set up the player
-        self.score = 0
-
+        
+        self.background = arcade.load_texture("images/floor.png")
+        
         # Set up the player
         self.score = 0
         self.player_sprite = Player("images/player.png", SPRITE_SCALING_PLAYER)
@@ -88,7 +88,7 @@ class MyGame(arcade.Window):
             self.goblin_list.append(goblin)
 
         # Set the background color
-        arcade.set_background_color(arcade.color.GRAY)
+       # arcade.set_background_color(arcade.color.GRAY)
 
     def on_draw(self):
         """
@@ -97,12 +97,16 @@ class MyGame(arcade.Window):
 
         # This command has to happen before we start drawing
         arcade.start_render()
-
+        
+        # Draw the background texture
+        arcade.draw_texture_rectangle(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2,
+                                      SCREEN_WIDTH, SCREEN_HEIGHT, self.background)
         # Draw all the sprites.
         self.goblin_list.draw()
         self.bullet_list.draw()
         self.player_list.draw()
         self.bullet1_list.draw()
+            
         
         # Put the text on the screen.
         output = f"Score: {self.score}"
@@ -135,7 +139,7 @@ class MyGame(arcade.Window):
             # For every goblin we hit, add to the score and remove the goblin
             for goblin in hit_list:
                goblin.kill()
-               self.score += 1
+               self.score += 0.5
                
             # If it did, get rid of the bullet
             if len(hit_list) > 0:
@@ -162,8 +166,8 @@ class MyGame(arcade.Window):
             # Set the enemy to face the player.
             goblin.angle = math.degrees(angle)-90
 
-            # Shoot every 90 frames change of shooting each frame
-            if self.frame_count % 90 == 0:
+            # Shoot every 80 frames change of shooting each frame
+            if self.frame_count % 80 == 0:
                 bullet1 = arcade.Sprite("images/laserred.png", SPRITE_SCALING_LASERRED)
                 bullet1.center_x = start_x
                 bullet1.center_y = start_y
@@ -225,7 +229,6 @@ class MyGame(arcade.Window):
         # Angle the bullet sprite so it doesn't look like it is flying
         # sideways.
         bullet.angle = math.degrees(angle)
-        print(f"Bullet angle: {bullet.angle:.2f}")
 
         # Taking into account the angle, calculate our change_x
         # and change_y. Velocity is how fast the bullet travels.
