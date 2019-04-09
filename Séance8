@@ -15,17 +15,19 @@ WIN = 4
 
 SPRITE_SCALING_PLAYER = 0.9
 SPRITE_SCALING_SLIME = 0.65
+SPRITE_SCALING_BOSS = 1
 SPRITE_SCALING_LOOP = 0.3
 SPRITE_SCALING_LASERRED = 0.5
 
 PLAYER_SKIN = "images/player.png"
+SLIME_SKIN = "images/slime.png"
+BOSS_SKIN = "images/boss.png"
 LASER_SKIN_SLIME = "images/laserred.png"
 LASER_SKIN_PLAYER = "images/loopblue.png"
 LASER_SKIN_PLAYER1 = "images/looppurple.png"
 LASER_SKIN_PLAYER2 = "images/loopyellow.png"
 LASER_SKIN_PLAYER3 = "images/loopred.png"
 LASER_SKIN_PLAYER4 = "images/loopgreen.png"
-SLIME_SKIN = "images/slime.png"
 BACKGROUND = "images/floor.png"
 BACKGROUND1 = "images/floortorch.png"
 
@@ -36,6 +38,7 @@ SLIME_COUNT0 = [4,5,6,7,8,9,10]
 MOVEMENT_SPEED = 7
 BULLET_SPEED = 6
 BULLET1_SPEED = 6
+BULLET2_SPEED = 6
 
 class Player(arcade.Sprite):
 
@@ -65,8 +68,10 @@ class Game(arcade.Window):
         
         self.player_list = None
         self.slime_list = None
+        self.boss_list = None
         self.bullet_list = None
         self.bullet1_list = None
+        self.bullet2_list = None
         
         self.player = None
                 
@@ -89,13 +94,22 @@ class Game(arcade.Window):
 
         self.player_list = arcade.SpriteList()
         self.slime_list = arcade.SpriteList()
+        self.boss_list = arcade.SpriteList()
         self.bullet_list = arcade.SpriteList()
         self.bullet1_list = arcade.SpriteList()
+        self.bullet2_list = arcade.SpriteList()
         
         self.player_sprite = Player(PLAYER_SKIN, SPRITE_SCALING_PLAYER)
         self.player_sprite.center_x = 450
         self.player_sprite.center_y = 300
         self.player_list.append(self.player_sprite)
+        
+        if self.score == SLIME_COUNT0:
+            boss = arcade.Sprite(BOSS_SKIN, SPRITE_SCALING_BOSS)
+            boss.center_x = 450
+            boss.center_y = 300
+            boss.angle = 170
+            self.boss_list.append(self.boss_sprite)
         
         for i in range(random.choice(SLIME_COUNT0)):
             slime = arcade.Sprite(SLIME_SKIN, SPRITE_SCALING_SLIME)
@@ -103,8 +117,8 @@ class Game(arcade.Window):
             slime.center_y = random.randrange(120, SCREEN_HEIGHT)
             slime.angle = 180
             self.slime_list.append(slime)
-            
-
+        
+     
     def draw_instructions_page(self, page_number):
         
         """ Affiche une page de démarrage (image). """
@@ -136,8 +150,10 @@ class Game(arcade.Window):
        
         self.player_list.draw()
         self.slime_list.draw()
+        self.boss_list.draw()
         self.bullet_list.draw()
         self.bullet1_list.draw()
+        self.bullet2_list.draw()
         
         output = f"Score: {self.score}"
         arcade.draw_text(output, 10, 20, arcade.color.WHITE, 14)
@@ -171,8 +187,8 @@ class Game(arcade.Window):
             self.draw_game_over()
         
         if len(self.slime_list) == 0:
-            self.draw_win()
-            
+            self.draw_win()          
+        
         self.background = arcade.load_texture(BACKGROUND)
     
     def on_mouse_press(self, x, y, button, modifiers):
@@ -223,8 +239,10 @@ class Game(arcade.Window):
             
             self.player_list.update()
             self.slime_list.update()
+            self.boss_list.update()
             self.bullet_list.update()
             self.bullet1_list.update()
+            self.bullet2_list.update()
                
         for slime in self.slime_list:
                 
@@ -246,18 +264,46 @@ class Game(arcade.Window):
                 bullet1.change_y = math.sin(angle) * BULLET1_SPEED
                 self.bullet1_list.append(bullet1)        
         
+        for boss in self.boss_list:
+                
+            start_x = boss.center_x
+            start_y = boss.center_y
+            dest_x = self.player_sprite.center_x
+            dest_y = self.player_sprite.center_y
+            x_diff = dest_x - start_x
+            y_diff = dest_y - start_y
+            angle = math.atan2(y_diff, x_diff)
+            boss.angle = math.degrees(125.71)
+            
+            if self.frame_count % 100 == 0:
+                bullet2 = arcade.Sprite(LASER_SKIN_SLIME, SPRITE_SCALING_LASERRED)
+                bullet2.center_x = start_x
+                bullet2.center_y = start_y
+                bullet2.angle = math.degrees(angle)
+                bullet2.change_x = math.cos(angle) * BULLET2_SPEED
+                bullet2.change_y = math.sin(angle) * BULLET2_SPEED
+                self.bullet2_list.append(bullet2)        
+                
         for bullet in self.bullet_list:
             hit_list = arcade.check_for_collision_with_list(bullet, self.slime_list)
+            hit_list1 = arcade.check_for_collision_with_list(bullet, self.boss_list)
             
             if len(hit_list) > 0:
+                bullet.kill()
+            
+            if len(hit_list1) > 0:
                 bullet.kill()
                 
             if bullet.bottom > self.width or bullet.top < 0 or bullet.right < 0 or bullet.left > self.width:
                 bullet.kill()
         
-            for goblin in hit_list:
-               goblin.kill()
+            for slime in hit_list:
+               slime.kill()
                self.score += 1
+            
+            for boss in hit_list1:
+               boss.kill()
+               self.score += 5
                
         for bullet1 in self.bullet1_list:
             hit_list = arcade.check_for_collision_with_list(bullet1, self.player_list)
@@ -268,10 +314,21 @@ class Game(arcade.Window):
                 
             if bullet1.bottom > self.width or bullet1.top < 0 or bullet1.right < 0 or bullet1.left > self.width:
                 bullet1.kill()
-            
+        
+        for bullet2 in self.bullet2_list:
+            hit_list = arcade.check_for_collision_with_list(bullet2, self.player_list)
+
+            if len(hit_list) > 0:
+                bullet2.kill()
+                self.current_state = GAME_OVER
+                
+            if bullet2.bottom > self.width or bullet2.top < 0 or bullet2.right < 0 or bullet2.left > self.width:
+                bullet2.kill()
+                
         self.bullet_list.update() 
         self.bullet1_list.update() 
-   
+        self.bullet2_list.update()
+        
     def on_key_press(self, key, modifiers):
         """Appelé quand une touche du clavier est pressé. """
 
