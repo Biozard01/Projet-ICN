@@ -1,0 +1,27 @@
+import tweepy
+
+consumer_key = "kOIrhBHOpUiDuewgztYF9cJSs"
+consumer_secret = "OkhM4d5pysFUHVrFAMwyBEBsaOQCoczbEttxkPsqPHcoTisfK1"
+
+access_token = "1105401310831095808-mHW1WgfJ4eI6Lw6tULGQJTQ6q6VgfI" 
+access_token_secret = "5U6oR3dCZYgoHG94C7MAR3XyvVIsEpublVVYMQFxyotKu" 
+
+auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+auth.set_access_token(access_token, access_token_secret)
+api = tweepy.API(auth)
+
+max_tweets = 100
+
+public_tweets = [status for status in tweepy.Cursor(api.user_timeline, id="Cereal_Carnage").items(max_tweets)]
+
+tps = 3
+
+BACKGROUND0 = "lol"
+
+BACKGROUND_CHOICE = "1"
+
+# Results
+if 3 == public_tweets:
+    print (BACKGROUND_CHOICE)
+    BACKGROUND_CHOICE = BACKGROUND0
+    print (BACKGROUND_CHOICE)
