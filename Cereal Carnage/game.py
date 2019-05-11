@@ -16,10 +16,10 @@ api = tweepy.API(auth)
 
 TWITTER_ACC = 'Cereal_Carnage'
 
-BACKGROUND0 = "map/start.jpg"
-BACKGROUND1 = "map/floor.jpg"
-BACKGROUND2 = "map/dirt.jpg"
-BACKGROUND3 = "map/snow.jpg"
+BACKGROUND0 = "map/start.png"
+BACKGROUND1 = "map/floor.png"
+BACKGROUND2 = "map/dirt.png"
+BACKGROUND3 = "map/snow.png"
 BACKGROUND_CHOICE = ""
 
 PLAYER_SKIN = "sprites/player.png"
