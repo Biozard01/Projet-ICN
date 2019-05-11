@@ -4,11 +4,11 @@ import math
 import time
 import tweepy
 
-consumer_key = ""
-consumer_secret = ""
+consumer_key = "xxxxxxxx"
+consumer_secret = "xxxxxxxx"
 
-access_token = "" 
-access_token_secret = "" 
+access_token = "xxxxxxxx" 
+access_token_secret = "xxxxxxxx" 
 
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
