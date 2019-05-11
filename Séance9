@@ -2,46 +2,6 @@ import random
 import arcade
 import math
 import time
-import tweepy
-
-consumer_key = "kOIrhBHOpUiDuewgztYF9cJSs"
-consumer_secret = "OkhM4d5pysFUHVrFAMwyBEBsaOQCoczbEttxkPsqPHcoTisfK1"
-
-access_token = "1105401310831095808-mHW1WgfJ4eI6Lw6tULGQJTQ6q6VgfI" 
-access_token_secret = "5U6oR3dCZYgoHG94C7MAR3XyvVIsEpublVVYMQFxyotKu" 
-
-auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-auth.set_access_token(access_token, access_token_secret)
-api = tweepy.API(auth)
-
-TWITTER_ACC = 'Cereal_Carnage'
-
-BACKGROUND0 = "C:/Game/map/start1.png"
-BACKGROUND1 = "C:/Game/map/floor.png"
-BACKGROUND2 = "C:/Game/map/dirt.png"
-BACKGROUND3 = "C:/Game/map/snow.png"
-BACKGROUND_CHOICE = ""
-
-PLAYER_SKIN = "C:/Game/sprites/player.png"
-ENNEMY0_SKIN = "C:/Game/sprites/eyeball.png"
-ENNEMY1_SKIN = "C:/Game/sprites/turtle.png"
-ENNEMY2_SKIN = "C:/Game/sprites/slime.png"
-ENNEMY0_SKIN_CHOICE = ""
-
-nbtweets = api.get_user(TWITTER_ACC).statuses_count
-tweet = int(str(nbtweets)[:1])
-
-if tweet <= 4:
-    BACKGROUND_CHOICE = BACKGROUND1
-    ENNEMY0_SKIN_CHOICE = ENNEMY0_SKIN
-    
-if tweet == 5:
-    BACKGROUND_CHOICE = BACKGROUND2
-    ENNEMY0_SKIN_CHOICE = ENNEMY1_SKIN
-
-if tweet >= 6:
-    BACKGROUND_CHOICE = BACKGROUND3
-    ENNEMY0_SKIN_CHOICE = ENNEMY2_SKIN
 
 SCREEN_WIDTH = 900
 SCREEN_HEIGHT = 600
@@ -53,31 +13,33 @@ GAME_RUNNING = 2
 GAME_OVER = 3
 WIN = 4
 
-ENNEMY0_COUNT = 5
-RESPAWN_TIME = 5
-
+RESPAWN_TIME = 10
 FIRE_RATE = 90
 MOVEMENT_SPEED = 7
 BULLET_SPEED = 6
 BULLET1_SPEED = 6
 
 SPRITE_SCALING_PLAYER = 0.9
-SPRITE_SCALING_ENNEMY0 = 0.65
+SPRITE_SCALING_SLIME = 0.65
 SPRITE_SCALING_LOOP = 0.3
 SPRITE_SCALING_LASERRED = 0.5
 
-LASER_SKIN_ENNEMY0 = "C:/Game/laser/laserred.png"
-LASER_SKIN_PLAYER = "C:/Game/laser/loopblue.png"
-LASER_SKIN_PLAYER1 = "C:/Game/laser/looppurple.png"
-LASER_SKIN_PLAYER2 = "C:/Game/laser/loopyellow.png"
-LASER_SKIN_PLAYER3 = "C:/Game/laser/loopred.png"
-LASER_SKIN_PLAYER4 = "C:/Game/laser/loopgreen.png"
+PLAYER_SKIN = "images/player.png"
+SLIME_SKIN = "images/slime.png"
+
+LASER_SKIN_SLIME = "images/laserred.png"
+LASER_SKIN_PLAYER = "images/loopblue.png"
+LASER_SKIN_PLAYER1 = "images/looppurple.png"
+LASER_SKIN_PLAYER2 = "images/loopyellow.png"
+LASER_SKIN_PLAYER3 = "images/loopred.png"
+LASER_SKIN_PLAYER4 = "images/loopgreen.png"
+
+BACKGROUND = "images/floor.png"
+BACKGROUND1 = "images/floortorch.png"
 
 PICK = [LASER_SKIN_PLAYER,LASER_SKIN_PLAYER1,LASER_SKIN_PLAYER2,LASER_SKIN_PLAYER3,LASER_SKIN_PLAYER4]
+SLIME_COUNT0 = [4,5,6,7,8,9,10]
 
-for i in range(5):
-    print(str(5 - i))
-    time.sleep(1)    
 
 class Player(arcade.Sprite):
 
@@ -95,7 +57,7 @@ class Player(arcade.Sprite):
             self.bottom = 0
         elif self.top > SCREEN_HEIGHT - 1:
             self.top = SCREEN_HEIGHT - 1
-            
+
 class Game(arcade.Window):
 
     def __init__(self):
@@ -116,11 +78,11 @@ class Game(arcade.Window):
         self.score_text = None
 
         self.background = None
-        self.background = arcade.load_texture(BACKGROUND_CHOICE)
+        self.background = arcade.load_texture(BACKGROUND)
         
         
         self.instructions = []
-        texture = arcade.load_texture(BACKGROUND0)
+        texture = arcade.load_texture(BACKGROUND1)
         self.instructions.append(texture)
         
     def setup(self):
@@ -139,13 +101,14 @@ class Game(arcade.Window):
         self.player_sprite.center_y = 300
         self.player_list.append(self.player_sprite)
         
-        for i in range(ENNEMY0_COUNT):
-            slime = arcade.Sprite(ENNEMY0_SKIN_CHOICE, SPRITE_SCALING_ENNEMY0)
+        for i in range(random.choice(SLIME_COUNT0)):
+            slime = arcade.Sprite(SLIME_SKIN, SPRITE_SCALING_SLIME)
             slime.center_x = random.randrange(SCREEN_WIDTH)
             slime.center_y = random.randrange(120, SCREEN_HEIGHT)
             slime.angle = 180
             self.slime_list.append(slime)
-       
+            
+
         
     def draw_instructions_page(self, page_number):
         
@@ -182,7 +145,7 @@ class Game(arcade.Window):
         self.bullet1_list.draw()
         
         output = f"Score: {self.score}"
-        arcade.draw_text(output, 10, 20, arcade.color.RED, 14)
+        arcade.draw_text(output, 10, 20, arcade.color.WHITE, 14)
         
     def draw_win(self):
         """ Ecris "You Win !" sur l'écran. """
@@ -215,7 +178,7 @@ class Game(arcade.Window):
         if len(self.slime_list) == 0:
             self.draw_win()
             
-        self.background = arcade.load_texture(BACKGROUND_CHOICE)
+        self.background = arcade.load_texture(BACKGROUND)
     
     def on_mouse_press(self, x, y, button, modifiers):
         """ Utilisé quand la souris bouge ou est cliqué. """
@@ -280,7 +243,7 @@ class Game(arcade.Window):
             slime.angle = math.degrees(125.71)
             
             if self.frame_count % FIRE_RATE == 0:
-                bullet1 = arcade.Sprite(LASER_SKIN_ENNEMY0, SPRITE_SCALING_LASERRED)
+                bullet1 = arcade.Sprite(LASER_SKIN_SLIME, SPRITE_SCALING_LASERRED)
                 bullet1.center_x = start_x
                 bullet1.center_y = start_y
                 bullet1.angle = math.degrees(angle)
@@ -333,12 +296,13 @@ class Game(arcade.Window):
             self.player_sprite.change_y = 0
         elif key == arcade.key.Q or key == arcade.key.D:
             self.player_sprite.change_x = 0
-            
+
 
 def main():
     window = Game()
     window.setup()
     arcade.run()
+
 
 if __name__ == "__main__":
     main()
