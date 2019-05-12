@@ -4,17 +4,17 @@ import math
 import time
 import tweepy
 
-consumer_key = "xxxxxxxx"
-consumer_secret = "xxxxxxxx"
+consumer_key = ""
+consumer_secret = ""
 
-access_token = "xxxxxxxx" 
-access_token_secret = "xxxxxxxx" 
+access_token = "" 
+access_token_secret = "" 
 
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth)
 
-TWITTER_ACC = 'Cereal_Carnage'
+TWITTER_ACC = 'RealDonaldTrump'
 
 BACKGROUND0 = "map/start.png"
 BACKGROUND1 = "map/floor.png"
@@ -29,22 +29,14 @@ ENNEMY2_SKIN = "sprites/slime.png"
 ENNEMY0_SKIN_CHOICE = ""
 
 nbtweets = api.get_user(TWITTER_ACC).statuses_count
+
 tweet = int(str(nbtweets)[:1])
+print (tweet)
 
-if tweet <= 4:
-    BACKGROUND_CHOICE = BACKGROUND1
-    ENNEMY0_SKIN_CHOICE = ENNEMY0_SKIN
-    
-if tweet == 5:
-    BACKGROUND_CHOICE = BACKGROUND2
-    ENNEMY0_SKIN_CHOICE = ENNEMY1_SKIN
-
-if tweet >= 6:
-    BACKGROUND_CHOICE = BACKGROUND3
-    ENNEMY0_SKIN_CHOICE = ENNEMY2_SKIN
+ENNEMY0_COUNT = 2 + tweet // 2
 
 SCREEN_WIDTH = 900
-SCREEN_HEIGHT = 600
+SCREEN_HEIGHT = 750
 SCREEN_TITLE = "Cereal Carnage"
 
 INSTRUCTIONS_PAGE_0 = 0
@@ -53,16 +45,13 @@ GAME_RUNNING = 2
 GAME_OVER = 3
 WIN = 4
 
-ENNEMY0_COUNT = 5
-RESPAWN_TIME = 5
-
 FIRE_RATE = 90
-MOVEMENT_SPEED = 7
+MOVEMENT_SPEED = 6
 BULLET_SPEED = 6
-BULLET1_SPEED = 6
+BULLET1_SPEED = 5.5
 
-SPRITE_SCALING_PLAYER = 0.9
-SPRITE_SCALING_ENNEMY0 = 0.65
+SPRITE_SCALING_PLAYER = 0.75
+SPRITE_SCALING_ENNEMY0 = [1,0.75,0.5,0.3]
 SPRITE_SCALING_LOOP = 0.3
 SPRITE_SCALING_LASERRED = 0.5
 
@@ -75,6 +64,19 @@ LASER_SKIN_PLAYER4 = "laser/loopgreen.png"
 
 PICK = [LASER_SKIN_PLAYER,LASER_SKIN_PLAYER1,LASER_SKIN_PLAYER2,LASER_SKIN_PLAYER3,LASER_SKIN_PLAYER4]
 
+if tweet <= 4:
+    BACKGROUND_CHOICE = BACKGROUND1
+    ENNEMY0_SKIN_CHOICE = ENNEMY0_SKIN
+    SPRITE_SCALING_ENNEMY0 = [1,1.5,2]
+    
+if tweet >= 6:
+    BACKGROUND_CHOICE = BACKGROUND2
+    ENNEMY0_SKIN_CHOICE = ENNEMY1_SKIN
+
+if  tweet == 5:
+    BACKGROUND_CHOICE = BACKGROUND3
+    ENNEMY0_SKIN_CHOICE = ENNEMY2_SKIN
+    
 for i in range(5):
     print(str(5 - i))
     time.sleep(1)    
@@ -106,7 +108,7 @@ class Game(arcade.Window):
         self.current_state = INSTRUCTIONS_PAGE_0
         
         self.player_list = None
-        self.slime_list = None
+        self.ennemy_list = None
         self.bullet_list = None
         self.bullet1_list = None
         
@@ -130,7 +132,7 @@ class Game(arcade.Window):
         self.score = 0
 
         self.player_list = arcade.SpriteList()
-        self.slime_list = arcade.SpriteList()
+        self.ennemy_list = arcade.SpriteList()
         self.bullet_list = arcade.SpriteList()
         self.bullet1_list = arcade.SpriteList()
         
@@ -140,21 +142,27 @@ class Game(arcade.Window):
         self.player_list.append(self.player_sprite)
         
         for i in range(ENNEMY0_COUNT):
-            slime = arcade.Sprite(ENNEMY0_SKIN_CHOICE, SPRITE_SCALING_ENNEMY0)
-            slime.center_x = random.randrange(SCREEN_WIDTH)
-            slime.center_y = random.randrange(120, SCREEN_HEIGHT)
-            slime.angle = 180
-            self.slime_list.append(slime)
+            ennemy = arcade.Sprite(ENNEMY0_SKIN_CHOICE, random.choice(SPRITE_SCALING_ENNEMY0))
+            ennemy.center_x = random.randrange(SCREEN_WIDTH)
+            ennemy.center_y = random.randrange(120, SCREEN_HEIGHT)
+            ennemy.angle = 180
+            self.ennemy_list.append(ennemy)
        
+        for ennemy in self.ennemy_list:
+            hit_list = arcade.check_for_collision_with_list(ennemy, self.ennemy_list)
+            
+            if len(hit_list) > 0:
+                ennemy.kill()
+                
         
     def draw_instructions_page(self, page_number):
         
         """ Affiche une page de démarrage (image). """
         
         page_texture = self.instructions[page_number]
-        arcade.draw_texture_rectangle(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 3.6,
-                                      page_texture.width,
-                                      page_texture.height, page_texture, 0)
+        arcade.draw_texture_rectangle(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2.66,
+                                      page_texture.width * 1.025,
+                                      page_texture.height *1.1, page_texture, 0)
     
                
     def draw_game_over(self):
@@ -162,13 +170,13 @@ class Game(arcade.Window):
         Ecris "Game over" sur l'écran.
         """
         output = "Game Over"
-        arcade.draw_text(output, 300, 350, arcade.color.WHITE, 54)
+        arcade.draw_text(output, 290, 550, arcade.color.WHITE, 54)
 
         output = "Cliquer n'importe ou pour recommencer. "
-        arcade.draw_text(output, 190, 300, arcade.color.WHITE, 25)
+        arcade.draw_text(output, 190, 450, arcade.color.WHITE, 25)
          
         output = f"Votre score : {self.score}"
-        arcade.draw_text(output, 350, 250, arcade.color.WHITE, 25)
+        arcade.draw_text(output, 280, 350, arcade.color.WHITE, 40)
         
     def draw_game(self):
         """ Dessine tous les sprites et le score. """
@@ -177,21 +185,21 @@ class Game(arcade.Window):
                                       SCREEN_WIDTH, SCREEN_HEIGHT, self.background)
        
         self.player_list.draw()
-        self.slime_list.draw()
+        self.ennemy_list.draw()
         self.bullet_list.draw()
         self.bullet1_list.draw()
         
         output = f"Score: {self.score}"
-        arcade.draw_text(output, 10, 20, arcade.color.RED, 14)
+        arcade.draw_text(output, 10, 20, arcade.color.WHITE, 20)
         
     def draw_win(self):
         """ Ecris "You Win !" sur l'écran. """
         
         output = "You Win !"
-        arcade.draw_text(output, 300, 350, arcade.color.WHITE, 54)
+        arcade.draw_text(output, 290, 450, arcade.color.WHITE, 54)
         
         output = f"Votre score: {self.score}"
-        arcade.draw_text(output, 320, 250, arcade.color.WHITE, 25)       
+        arcade.draw_text(output, 280, 350, arcade.color.WHITE, 40)       
             
     def on_draw(self):
         """ Affiche le jeu ou les instructions sur l'écran. """
@@ -212,7 +220,7 @@ class Game(arcade.Window):
 
             self.draw_game_over()
         
-        if len(self.slime_list) == 0:
+        if len(self.ennemy_list) == 0:
             self.draw_win()
             
         self.background = arcade.load_texture(BACKGROUND_CHOICE)
@@ -264,20 +272,20 @@ class Game(arcade.Window):
         if self.current_state == GAME_RUNNING:
             
             self.player_list.update()
-            self.slime_list.update()
+            self.ennemy_list.update()
             self.bullet_list.update()
             self.bullet1_list.update()
                
-        for slime in self.slime_list:
+        for ennemy in self.ennemy_list:
                 
-            start_x = slime.center_x
-            start_y = slime.center_y
+            start_x = ennemy.center_x
+            start_y = ennemy.center_y
             dest_x = self.player_sprite.center_x
             dest_y = self.player_sprite.center_y
             x_diff = dest_x - start_x
             y_diff = dest_y - start_y
             angle = math.atan2(y_diff, x_diff)
-            slime.angle = math.degrees(125.71)
+            ennemy.angle = math.degrees(125.71)
             
             if self.frame_count % FIRE_RATE == 0:
                 bullet1 = arcade.Sprite(LASER_SKIN_ENNEMY0, SPRITE_SCALING_LASERRED)
@@ -289,7 +297,7 @@ class Game(arcade.Window):
                 self.bullet1_list.append(bullet1)        
         
         for bullet in self.bullet_list:
-            hit_list = arcade.check_for_collision_with_list(bullet, self.slime_list)
+            hit_list = arcade.check_for_collision_with_list(bullet, self.ennemy_list)
             
             if len(hit_list) > 0:
                 bullet.kill()
@@ -297,8 +305,8 @@ class Game(arcade.Window):
             if bullet.bottom > self.width or bullet.top < 0 or bullet.right < 0 or bullet.left > self.width:
                 bullet.kill()
         
-            for slime in hit_list:
-               slime.kill()
+            for ennemy in hit_list:
+               ennemy.kill()
                self.score += 1
                
         for bullet1 in self.bullet1_list:
