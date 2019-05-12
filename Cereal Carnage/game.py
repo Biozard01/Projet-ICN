@@ -4,17 +4,17 @@ import math
 import time
 import tweepy
 
-consumer_key = ""
-consumer_secret = ""
+consumer_key = "XXXX"
+consumer_secret = "XXXX"
 
-access_token = "" 
-access_token_secret = "" 
+access_token = "XXXX" 
+access_token_secret = "XXXX" 
 
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth)
 
-TWITTER_ACC = 'RealDonaldTrump'
+TWITTER_ACC = 'XXXX'
 
 BACKGROUND0 = "map/start.png"
 BACKGROUND1 = "map/floor.png"
