@@ -1,3 +1,45 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import random
 import arcade
 import math
@@ -16,6 +58,8 @@ api = tweepy.API(auth)
 
 TWITTER_ACC = 'XXXX'
 
+print("Compte :", TWITTER_ACC)
+
 BACKGROUND0 = "map/start.png"
 BACKGROUND1 = "map/floor.png"
 BACKGROUND2 = "map/dirt.png"
@@ -28,15 +72,25 @@ ENNEMY1_SKIN = "sprites/turtle.png"
 ENNEMY2_SKIN = "sprites/slime.png"
 ENNEMY0_SKIN_CHOICE = ""
 
+EYEBALL = "Vol'Oeil"
+TURTLE = "Tortépée"
+SLIME = "Slime"
+ENNEMY_NAME =""
+
 nbtweets = api.get_user(TWITTER_ACC).statuses_count
 
-tweet = int(str(nbtweets)[:1])
-print (tweet)
+DIFFICULTY = 2
 
-ENNEMY0_COUNT = 2 + tweet // 2
+tweet = int(str(nbtweets)[:DIFFICULTY])
 
+print ("Nombre de Tweet :", nbtweets)
+print ("Difficulté :", DIFFICULTY)
+print ("Nombres d'ennemis :", tweet + 1)
+
+ENNEMY0_COUNT = 1 + tweet
+
+SCREEN_HEIGHT = 745
 SCREEN_WIDTH = 900
-SCREEN_HEIGHT = 750
 SCREEN_TITLE = "Cereal Carnage"
 
 INSTRUCTIONS_PAGE_0 = 0
@@ -64,19 +118,23 @@ LASER_SKIN_PLAYER4 = "laser/loopgreen.png"
 
 PICK = [LASER_SKIN_PLAYER,LASER_SKIN_PLAYER1,LASER_SKIN_PLAYER2,LASER_SKIN_PLAYER3,LASER_SKIN_PLAYER4]
 
-if tweet <= 4:
+if tweet <= 40:
     BACKGROUND_CHOICE = BACKGROUND1
     ENNEMY0_SKIN_CHOICE = ENNEMY0_SKIN
     SPRITE_SCALING_ENNEMY0 = [1,1.5,2]
-    
-if tweet >= 6:
+    ENNEMY_NAME = EYEBALL
+if tweet >= 60:
     BACKGROUND_CHOICE = BACKGROUND2
     ENNEMY0_SKIN_CHOICE = ENNEMY1_SKIN
-
-if  tweet == 5:
+    ENNEMY_NAME = TURTLE
+if  tweet == 50:
     BACKGROUND_CHOICE = BACKGROUND3
     ENNEMY0_SKIN_CHOICE = ENNEMY2_SKIN
-    
+    ENNEMY_NAME = SLIME
+
+print("Ennemis :", ENNEMY_NAME) 
+print("Map :", BACKGROUND_CHOICE)   
+ 
 for i in range(5):
     print(str(5 - i))
     time.sleep(1)    
