@@ -17,7 +17,6 @@ En effet, avant de commencer à joué, vous avez deux information a donné : un 
 
 Le compte Tweeter choisi va permettre aux jeu de choisir l’environnement du jeu (apparence des ennemies, fond de carte et nombres de créatures) grâce aux nombres de tweets du compte.
 
-
 ### Génèse Du Projet
 ___
 Pour réaliser ce projet, nous avons donc utilisé certains sites tel que [Arcade Academy](http://arcade.academy/examples/index.html) pour trouver des idées, des aides de conception graphique, des méchanismes de jeu et des bouts de code.
@@ -48,9 +47,4 @@ Lors de la 5ème séance, c'est l'arriver des céreales en tant que projectile d
 
 Au fur et a mesure des séance suivantes d'autre nouveauté arrive, d'abord un écran en cas de victoire, puis le début des essais sur tweepy, la librairie python qui permet d'utiliser des fonctionnalité de Tweeter, l'ajout puis la suppression d'un boss qui rendait le jeu trop dur.
 
-
-\pagebreak
-
 <img src='https://drive.google.com/uc?id=1ULhP4z23JPrbuNZpZYj5kH3qzzxbEPY4' style='position:absolute; top:200px; left:-1000px; width:1600px;'>
-
-<img src='https://drive.google.com/uc?id=1ULhP4z23JPrbuNZpZYj5kH3qzzxbEPY4' style='position:absolute; top:0px; left:0px; width:1500px;'>
