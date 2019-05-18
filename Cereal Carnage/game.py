@@ -40,6 +40,16 @@
 
 
 
+
+
+
+
+
+
+
+DIFFICULTY = 2
+TWITTER_ACC = 'XXXX'
+
 import random
 import arcade
 import math
@@ -55,10 +65,6 @@ access_token_secret = "XXXX"
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth)
-
-TWITTER_ACC = 'XXXX'
-
-print("Compte :", TWITTER_ACC)
 
 BACKGROUND0 = "map/start.png"
 BACKGROUND1 = "map/floor.png"
@@ -79,13 +85,7 @@ ENNEMY_NAME =""
 
 nbtweets = api.get_user(TWITTER_ACC).statuses_count
 
-DIFFICULTY = 2
-
 tweet = int(str(nbtweets)[:DIFFICULTY])
-
-print ("Nombre de Tweet :", nbtweets)
-print ("Difficulté :", DIFFICULTY)
-print ("Nombres d'ennemis :", tweet + 1)
 
 ENNEMY0_COUNT = 1 + tweet
 
@@ -118,22 +118,25 @@ LASER_SKIN_PLAYER4 = "laser/loopgreen.png"
 
 PICK = [LASER_SKIN_PLAYER,LASER_SKIN_PLAYER1,LASER_SKIN_PLAYER2,LASER_SKIN_PLAYER3,LASER_SKIN_PLAYER4]
 
-if tweet <= 40:
+if int(str(nbtweets)[:1]) <= 4:
     BACKGROUND_CHOICE = BACKGROUND1
     ENNEMY0_SKIN_CHOICE = ENNEMY0_SKIN
     SPRITE_SCALING_ENNEMY0 = [1,1.5,2]
     ENNEMY_NAME = EYEBALL
-if tweet >= 60:
+if int(str(nbtweets)[:1]) >= 6:
     BACKGROUND_CHOICE = BACKGROUND2
     ENNEMY0_SKIN_CHOICE = ENNEMY1_SKIN
     ENNEMY_NAME = TURTLE
-if  tweet == 50:
+if  int(str(nbtweets)[:1]) == 5:
     BACKGROUND_CHOICE = BACKGROUND3
     ENNEMY0_SKIN_CHOICE = ENNEMY2_SKIN
     ENNEMY_NAME = SLIME
 
-print("Ennemis :", ENNEMY_NAME) 
-print("Map :", BACKGROUND_CHOICE)   
+print("Compte :", TWITTER_ACC)
+print ("Nombre de Tweet :", nbtweets)
+print ("Difficulté :", DIFFICULTY)
+print("Map :", BACKGROUND_CHOICE)  
+print ("Nombres d'ennemis :", ENNEMY0_COUNT, ENNEMY_NAME)    
  
 for i in range(5):
     print(str(5 - i))
